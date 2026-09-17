@@ -4,14 +4,18 @@ import android.graphics.Bitmap
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
+
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -19,7 +23,8 @@ import androidx.compose.ui.unit.dp
 import ui.components.UserProfileHeader
 import com.example.radioui.ui.theme.RadioUITheme
 import ui.components.MainAudioPlayer
-import ui.components.UserProfileHeader
+import ui.components.StationCatalog
+
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -29,14 +34,17 @@ class MainActivity : ComponentActivity() {
                 // Estado para almacenar la foto capturada en tiempo real
                 var capturedPhoto by remember { mutableStateOf<Bitmap?>(null) }
                 val scrollState = rememberScrollState()
+                var selectedStationId by remember { mutableStateOf("1") }
 
                 Column(
                     modifier = Modifier
+                        .verticalScroll(scrollState)
                         .fillMaxSize()
                         .background(Color(0xFFF8F9FE))
-                        .padding(top = 46.dp, start = 16.dp, end = 16.dp, bottom = 16.dp)
+                        .statusBarsPadding()//adaptar padin superior a cualquier telefono
+                        .padding(horizontal = 20.dp, vertical = 16.dp)
                 ) {
-                    // Renderizamos la cabecera pasando el estado y la función para actualizarlo
+                    // cabecera
                     UserProfileHeader(
                         userBitmap = capturedPhoto,
                         onPhotoCaptured = { bitmap ->
@@ -44,7 +52,18 @@ class MainActivity : ComponentActivity() {
                         }
                     )
                     Spacer(modifier = Modifier.height(16.dp))
+                    //componente de radio
                     MainAudioPlayer()
+
+                    Spacer(modifier = Modifier.height(16.dp))
+                    // Emisoras
+                    StationCatalog(
+                        activeStationId = selectedStationId,
+                        onStationSelect = { station ->
+                            selectedStationId = station.id
+                        }
+                    )
+
                 }
             }
         }

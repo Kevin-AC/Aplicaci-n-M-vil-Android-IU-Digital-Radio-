@@ -1,0 +1,353 @@
+package ui.components
+
+import android.R
+import android.view.HapticFeedbackConstants
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.VolumeMute
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.outlined.Timer
+import androidx.compose.material.icons.outlined.Vibration
+import androidx.compose.material.icons.outlined.VolumeUp
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+
+
+
+@Composable
+fun MainAudioPlayer(
+    modifier: Modifier = Modifier
+){
+    var isPlaying by remember { mutableStateOf(true)}
+    var volume by remember { mutableFloatStateOf(0.75f) }
+    var view = LocalView.current
+
+    fun performHapticFeedback(){
+        view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+    }
+
+    Card(
+        shape = RoundedCornerShape(28.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+        modifier = modifier.fillMaxWidth()
+    ) {
+        Column(
+            modifier= Modifier
+                .padding(20.dp)
+                .fillMaxWidth()
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Surface(
+                    color = Color(0xFFFFE4E6),
+                    shape = RoundedCornerShape(50)
+                ) {
+                    Row(
+                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ){
+                        Box(
+                            modifier = Modifier
+                                .size(8.dp)
+                                .clip(CircleShape)
+                                .background(Color(0xFFE11D48))
+                        )
+                        Spacer(modifier = Modifier.width((6.dp)))
+                        Text(
+                            text = "En Vivo",
+                            color = Color(0xFF9F1239),
+                            fontSize = 11.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                }
+
+                Surface(
+                        color = Color(0xFFF1F5F9),
+                        shape = RoundedCornerShape(50)
+                ) {
+                    Row(
+                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.GraphicEq,
+                            contentDescription = null,
+                            tint = Color(0xFF475569),
+                            modifier = Modifier.size(14.dp)
+                        )
+                        Spacer(modifier= Modifier.width(4.dp))
+                        Text(
+                            text = "192 kps . 98.4 FM Digital",
+                            color = Color(0xFF475569),
+                            fontSize = 11.sp,
+                            fontWeight = FontWeight.Medium
+                        )
+                    }
+                }
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+            Text(
+                text = "Emisión central",
+                color = Color(0xFF4338CA),
+                fontSize = 11.sp,
+                fontWeight = FontWeight.Bold,
+                letterSpacing = 0.5.sp
+            )
+            Spacer(modifier = Modifier.height(2.dp))
+            Text(
+                text = "La voz del campus",
+                color = Color(0xFF0F172A),
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = "Camilo Estudiante #42",
+                color = Color(0xFF64748B),
+                fontSize = 13.sp
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            // Barra de audio
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(16.dp))
+                    .background(Color((0xFFF8FAFC)))
+                    .padding(14.dp)
+            ){
+                Column(modifier = Modifier.fillMaxWidth()){
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(48.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.Bottom
+                    ) {
+                        val barHeights = listOf(
+                            20,
+                            36,
+                            12,
+                            8,
+                            38,
+                            26,
+                            42,
+                            8,
+                            32,
+                            22,
+                            16,
+                            8,
+                            34,
+                            44,
+                            18,
+                            10,
+                            28,
+                            20,
+                            32
+                        )
+                        val barColors = listOf(
+                            Color(0xFF4338CA),
+                            Color(0xFF4338CA),
+                            Color(0xFF06B6D4),
+                            Color(0xFF4338CA),
+                            Color(0xFF0D9488),
+                            Color(0xFF4338CA),
+                            Color(0xFF4338CA),
+                            Color(0xFF06B6D4),
+                            Color(0xFF4338CA),
+                            Color(0xFF4338CA),
+                            Color(0xFF0D9488),
+                            Color(0xFF4338CA),
+                            Color(0xFF4338CA),
+                            Color(0xFF06B6D4),
+                            Color(0xFF4338CA),
+                            Color(0xFF4338CA),
+                            Color(0xFF0D9488),
+                            Color(0xFF4338CA),
+                            Color(0xFF06B6D4)
+                        )
+                        barHeights.forEachIndexed { index, height ->
+                            Box(
+                                modifier = Modifier
+                                    .width(8.dp)
+                                    .height(height.dp)
+                                    .clip(RoundedCornerShape(4.dp))
+                                    .background(barColors[index % barColors.size])
+                            )
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(12.dp))
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ){
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .size(6.dp)
+                                    .clip(CircleShape)
+                                    .background(Color(0xFF059669))
+                            )
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text(
+                                text = "Modulacion UI Antena",
+                                color = Color(0xFF334155),
+                                fontSize = 11.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                        Text(
+                            text = "Latencia: 0.8s",
+                            color = Color(0xFF475569),
+                            fontSize = 11.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+
+                    }
+                }
+            }
+            Spacer(modifier = Modifier.height(20.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                verticalAlignment = Alignment.CenterVertically
+            ){
+                IconButton(
+                    onClick = {performHapticFeedback()},
+                    modifier = Modifier
+                        .size(44.dp)
+                        .background(Color(0xFFF1F5F9),CircleShape)
+                ) {
+                    Icon(
+                        imageVector = Icons.Outlined.Timer,
+                        contentDescription = "Temporizador",
+                        tint = Color(0xFF334155)
+                    )
+                }
+                IconButton(onClick = { performHapticFeedback() }) {
+                    Icon(
+                        imageVector = Icons.Default.SkipPrevious,
+                        contentDescription = "Anterior",
+                        tint = Color(0xFF1E293B),
+                        modifier = Modifier.size(28.dp)
+                    )
+                }
+
+                IconButton(
+                    onClick = {
+                        performHapticFeedback()
+                        isPlaying = !isPlaying
+                    },
+                    modifier = Modifier
+                        .size(64.dp)
+                        .background(Color(0xFF3730A3), CircleShape)
+                ) {
+                    Icon(
+                        imageVector = if (isPlaying) Icons.Default.Pause else Icons.Default.PlayArrow,
+                        contentDescription = if (isPlaying) "Pausar" else "Reproducir",
+                        tint = Color.White,
+                        modifier = Modifier.size(32.dp)
+                    )
+                }
+                IconButton(onClick = { performHapticFeedback() }) {
+                    Icon(
+                        imageVector = Icons.Default.SkipNext,
+                        contentDescription = "Siguiente",
+                        tint = Color(0xFF1E293B),
+                        modifier = Modifier.size(28.dp)
+                    )
+                }
+                IconButton(
+                    onClick = { performHapticFeedback() },
+                    modifier = Modifier
+                        .size(44.dp)
+                        .background(Color(0xFFF1F5F9), CircleShape)
+                ) {
+                    Icon(
+                        imageVector = Icons.Outlined.VolumeUp,
+                        contentDescription = "Volumen",
+                        tint = Color(0xFF334155)
+                    )
+                }
+            }
+            // --- CONTROL DESLIZANTE DE VOLUMEN ---
+            Spacer(modifier = Modifier.height(20.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    imageVector = Icons.Default.VolumeMute,
+                    contentDescription = null,
+                    tint = Color(0xFF64748B),
+                    modifier = Modifier.size(18.dp)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Slider(
+                    value = volume,
+                    onValueChange = {
+                        volume = it
+                    },
+                    colors = SliderDefaults.colors(
+                        thumbColor = Color.Transparent,
+                        activeTrackColor = Color(0xFF4338CA),
+                        inactiveTrackColor = Color(0xFFE2E8F0)
+                    ),
+                    modifier = Modifier.weight(1f)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = "${(volume * 100).toInt()}%",
+                    color = Color(0xFF1E293B),
+                    fontSize = 11.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+            Spacer(modifier = Modifier.height(12.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.Top
+            ){
+                Icon(
+                    imageVector = Icons.Outlined.Vibration,
+                    contentDescription = null,
+                    tint = Color(0xFF4338CA),
+                    modifier = Modifier
+                        .size(16.dp)
+                        .padding(top = 2.dp)
+                )
+                Spacer(modifier = Modifier.width(6.dp))
+                Text(
+                    text = "Retroalimentación háptica activada (Vibración al pulsar)",
+                    color = Color(0xFF64748B),
+                    fontSize = 11.sp,
+                    fontWeight = FontWeight.Medium,
+                    modifier = Modifier.weight(1f, fill = false)
+                )
+            }
+        }
+
+    }
+}

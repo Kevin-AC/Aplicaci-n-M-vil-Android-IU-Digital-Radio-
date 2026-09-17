@@ -4,6 +4,13 @@ plugins {
 }
 
 android {
+
+    packaging {
+        jniLibs {
+            // Fuerza la alineación de archivos .so a bordes de 16 KB
+            useLegacyPackaging = false
+        }
+    }
     namespace = "com.example.radioui"
     compileSdk {
         version = release(37)
@@ -58,4 +65,5 @@ dependencies {
     implementation(libs.androidx.camera.view)
     implementation(libs.coil.compose)
     implementation(libs.androidx.media3.exoplayer)
+    implementation(libs.androidx.compose.material.icons.extended)
 }

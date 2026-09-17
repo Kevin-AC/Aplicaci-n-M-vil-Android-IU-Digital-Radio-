@@ -66,4 +66,6 @@ dependencies {
     implementation(libs.coil.compose)
     implementation(libs.androidx.media3.exoplayer)
     implementation(libs.androidx.compose.material.icons.extended)
+
+    implementation("androidx.exifinterface:exifinterface:1.3.7")
 }

@@ -31,19 +31,50 @@ import androidx.core.content.ContextCompat
 import android.Manifest
 import android.content.Context
 import android.graphics.BitmapFactory
+import android.graphics.Matrix
+import androidx.exifinterface.media.ExifInterface
 import android.net.Uri
 import androidx.core.content.FileProvider
 import java.io.File
 
 
-fun createImageUri(context: Context): Uri {
-    val directory = File(context.getExternalFilesDir(null), "Pictures")
-    if (!directory.exists()) {
-        directory.mkdirs()
+fun getCorrectlyOrientedBitmap(imagePath: String): Bitmap? {
+    val bitmap = BitmapFactory.decodeFile(imagePath) ?: return null
+
+    return try {
+        val exif = ExifInterface(imagePath)
+        val orientation = exif.getAttributeInt(
+            ExifInterface.TAG_ORIENTATION,
+            ExifInterface.ORIENTATION_UNDEFINED
+        )
+
+        val matrix = Matrix()
+        when (orientation) {
+            ExifInterface.ORIENTATION_ROTATE_90 -> matrix.postRotate(90f)
+            ExifInterface.ORIENTATION_ROTATE_180 -> matrix.postRotate(180f)
+            ExifInterface.ORIENTATION_ROTATE_270 -> matrix.postRotate(270f)
+            else -> return bitmap // Si no requiere rotación
+        }
+
+        Bitmap.createBitmap(
+            bitmap, 0, 0,
+            bitmap.width, bitmap.height,
+            matrix, true
+        )
+    } catch (e: Exception) {
+        e.printStackTrace()
+        bitmap
     }
-    val file = File.createTempFile("selected_image_", ".jpg", directory)
-    val authority = "${context.packageName}.fileprovider"
-    return FileProvider.getUriForFile(context, authority, file)
+}
+
+fun createImageFileAndUri(context: Context): Pair<Uri, File> {
+    val file = File.createTempFile("profile_",".jpg",context.cacheDir)
+    val uri = FileProvider.getUriForFile(
+        context,
+        "${context.packageName}.fileprovider",
+        file
+    )
+    return Pair(uri,file)
 }
 @Composable
 fun UserProfileHeader(
@@ -51,23 +82,17 @@ fun UserProfileHeader(
     onPhotoCaptured:(Bitmap) -> Unit
 ){
     val context = LocalContext.current
-    var tempImageUri by remember { mutableStateOf<Uri?>(null) }
+    var photoFile by remember { mutableStateOf<File?>(null) }
     val cameraLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.TakePicture()
     ) { isSuccess ->
-        if (isSuccess && tempImageUri != null) {
-            try {
-                // Usamos el operador let para garantizar que uri no es nulo
-                tempImageUri?.let { uri ->
-                    val inputStream = context.contentResolver.openInputStream(uri)
-                    val bitmap = BitmapFactory.decodeStream(inputStream)
-                    inputStream?.close()
-                    if (bitmap != null) {
-                        onPhotoCaptured(bitmap)
-                    }
+        if (isSuccess) {
+            val fileToProcess = photoFile ?: File(context.cacheDir, "profile_photo.jpg")
+            if (fileToProcess.exists()) {
+                val correctedBitmap = getCorrectlyOrientedBitmap(fileToProcess.absolutePath)
+                if (correctedBitmap != null) {
+                    onPhotoCaptured(correctedBitmap)
                 }
-            } catch (e: Exception) {
-                Log.e("UserProfileHeader", "Error decodificando la imagen: ${e.message}")
             }
         }
     }
@@ -75,8 +100,8 @@ fun UserProfileHeader(
         contract = ActivityResultContracts.RequestPermission()
     ) {isGranted ->
         if(isGranted){
-            val uri = createImageUri(context)
-            tempImageUri = uri
+            val (uri,file)= createImageFileAndUri(context)
+            photoFile =file
             cameraLauncher.launch(uri)
         }else{
             Log.d(TAG,"Permiso de cámara denegado")
@@ -145,8 +170,8 @@ fun UserProfileHeader(
                     )
 
                     if (permissionCheckResult == PackageManager.PERMISSION_GRANTED) {
-                        val uri = createImageUri(context)
-                        tempImageUri = uri
+                        val (uri,file) = createImageFileAndUri(context)
+                        photoFile = file
                         cameraLauncher.launch(uri)
                     } else {
                         permissionLauncher.launch(Manifest.permission.CAMERA)

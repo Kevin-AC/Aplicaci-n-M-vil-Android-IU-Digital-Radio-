@@ -22,11 +22,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.radioui.RadioStation
 import com.example.radioui.sampleStations
-
 
 @Composable
 fun MainAudioPlayer(
@@ -102,7 +102,7 @@ fun MainAudioPlayer(
                         )
                         Spacer(modifier= Modifier.width(4.dp))
                         Text(
-                            text = "192 kps . 98.4 FM Digital",
+                            text = "${station.frequency}",
                             color = Color(0xFF475569),
                             fontSize = 11.sp,
                             fontWeight = FontWeight.Medium
@@ -345,7 +345,7 @@ fun MainAudioPlayer(
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.Top
+                verticalAlignment = Alignment.CenterVertically
             ){
                 Icon(
                     imageVector = Icons.Outlined.Vibration,
@@ -355,7 +355,7 @@ fun MainAudioPlayer(
                         .size(16.dp)
                         .padding(top = 2.dp)
                 )
-                Spacer(modifier = Modifier.width(6.dp))
+                Spacer(modifier = Modifier.width(4.dp))
                 Text(
                     text = "Retroalimentación háptica activada (Vibración al pulsar)",
                     color = Color(0xFF64748B),
@@ -367,4 +367,14 @@ fun MainAudioPlayer(
         }
 
     }
+}
+@Preview(showBackground = true, name = "Reproductor Principal - Modo Claro")
+@Composable
+fun MainAudioPlayerPreview() {
+    // Usamos la emisora de prueba por defecto y lambdas vacías para la vista previa
+    MainAudioPlayer(
+        station = sampleStations.first(),
+        onNextStation = {},
+        onPreviousStation = {}
+    )
 }

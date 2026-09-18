@@ -70,10 +70,11 @@ fun StationCatalog(
         }
         Spacer(modifier = Modifier.height(8.dp))
     }
+    //Column para contener todas las cards de las emisoras
     Column(
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
-        stations.forEach { station ->
+        stations.forEach { station ->//recorrer lista de emisoras guardadas
             StationItemCard(
                 station = station,
                 isSelected = station.id== activeStationId,
@@ -84,7 +85,7 @@ fun StationCatalog(
 }
 
 @Composable
-fun StationItemCard(
+fun StationItemCard( //card para mostar emisora
     station: RadioStation,
     isSelected: Boolean,
     onSelect: () -> Unit

@@ -39,23 +39,26 @@ fun MainAudioPlayer(
     fun performHapticFeedback(){
         view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
     }
-
+    //compomente principal/contenedor
     Card(
         shape = RoundedCornerShape(28.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
         modifier = modifier.fillMaxWidth()
     ) {
+        //Column bloque principal
         Column(
             modifier= Modifier
                 .padding(20.dp)
                 .fillMaxWidth()
         ) {
+            //Row contenedor de informacion/estado emisora
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
+                //en vivo
                 Surface(
                     color = Color(0xFFFFE4E6),
                     shape = RoundedCornerShape(50)
@@ -79,7 +82,7 @@ fun MainAudioPlayer(
                         )
                     }
                 }
-
+                // numero de FM sintonizada
                 Surface(
                         color = Color(0xFFF1F5F9),
                         shape = RoundedCornerShape(50)
@@ -126,14 +129,14 @@ fun MainAudioPlayer(
                 fontSize = 13.sp
             )
             Spacer(modifier = Modifier.height(16.dp))
-            // Barra de audio
+
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(16.dp))
                     .background(Color((0xFFF8FAFC)))
                     .padding(14.dp)
-            ){
+            ){ //Column barras de audio
                 Column(modifier = Modifier.fillMaxWidth()){
                     Row(
                         modifier = Modifier
@@ -228,6 +231,7 @@ fun MainAudioPlayer(
                 }
             }
             Spacer(modifier = Modifier.height(20.dp))
+            //Botones de control
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceEvenly,
@@ -291,7 +295,7 @@ fun MainAudioPlayer(
                     )
                 }
             }
-            // --- CONTROL DESLIZANTE DE VOLUMEN ---
+            // --- control de volumen---
             Spacer(modifier = Modifier.height(20.dp))
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -325,6 +329,7 @@ fun MainAudioPlayer(
                 )
             }
             Spacer(modifier = Modifier.height(12.dp))
+            // mensaje de retroalimentacion haptica
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center,

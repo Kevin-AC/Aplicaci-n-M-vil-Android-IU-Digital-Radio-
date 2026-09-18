@@ -1,6 +1,5 @@
 package ui.components
 
-import android.R
 import android.view.HapticFeedbackConstants
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -8,7 +7,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.VolumeMute
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.outlined.Timer
 import androidx.compose.material.icons.outlined.Vibration
@@ -19,21 +17,26 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-
+import com.example.radioui.RadioStation
+import com.example.radioui.sampleStations
 
 
 @Composable
 fun MainAudioPlayer(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    station: RadioStation = sampleStations.first(),///Recibe la emisora seleccionada
+    onNextStation: () -> Unit,
+    onPreviousStation: () -> Unit
 ){
-    var isPlaying by remember { mutableStateOf(true)}
-    var volume by remember { mutableFloatStateOf(0.75f) }
+    var isPlaying by rememberSaveable { mutableStateOf(true)}
+    var volume by rememberSaveable { mutableFloatStateOf(0.75f) }
     var view = LocalView.current
 
     fun performHapticFeedback(){
@@ -109,7 +112,7 @@ fun MainAudioPlayer(
             }
             Spacer(modifier = Modifier.height(16.dp))
             Text(
-                text = "Emisión central",
+                text = station.category.uppercase(),
                 color = Color(0xFF4338CA),
                 fontSize = 11.sp,
                 fontWeight = FontWeight.Bold,
@@ -117,14 +120,14 @@ fun MainAudioPlayer(
             )
             Spacer(modifier = Modifier.height(2.dp))
             Text(
-                text = "La voz del campus",
+                text = station.name,//mostrar nombre emisora
                 color = Color(0xFF0F172A),
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
-                text = "Camilo Estudiante #42",
+                text ="${station.frequency} • ${station.listenersCount}",//mostar datos extra de emisora
                 color = Color(0xFF64748B),
                 fontSize = 13.sp
             )
@@ -249,7 +252,11 @@ fun MainAudioPlayer(
                         tint = Color(0xFF334155)
                     )
                 }
-                IconButton(onClick = { performHapticFeedback() }) {
+                IconButton(onClick = { //boton anterior
+                    performHapticFeedback()
+                    onPreviousStation()
+                }) {
+
                     Icon(
                         imageVector = Icons.Default.SkipPrevious,
                         contentDescription = "Anterior",
@@ -258,7 +265,7 @@ fun MainAudioPlayer(
                     )
                 }
 
-                IconButton(
+                IconButton(//boton play
                     onClick = {
                         performHapticFeedback()
                         isPlaying = !isPlaying
@@ -274,7 +281,12 @@ fun MainAudioPlayer(
                         modifier = Modifier.size(32.dp)
                     )
                 }
-                IconButton(onClick = { performHapticFeedback() }) {
+                IconButton(//boton siguiente
+                    onClick = {
+                        performHapticFeedback()
+                        onNextStation()
+
+                    }) {
                     Icon(
                         imageVector = Icons.Default.SkipNext,
                         contentDescription = "Siguiente",

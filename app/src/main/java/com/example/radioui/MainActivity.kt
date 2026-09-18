@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -34,7 +35,10 @@ class MainActivity : ComponentActivity() {
                 // Estado para almacenar la foto capturada en tiempo real
                 var capturedPhoto by remember { mutableStateOf<Bitmap?>(null) }
                 val scrollState = rememberScrollState()
-                var selectedStationId by remember { mutableStateOf("1") }
+                var selectedStationId by rememberSaveable { mutableStateOf("1") }
+                val currentStation = sampleStations.find { it.id == selectedStationId } ?: sampleStations.first()
+
+
 
                 Column(
                     modifier = Modifier
@@ -53,11 +57,26 @@ class MainActivity : ComponentActivity() {
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                     //componente de radio
-                    MainAudioPlayer()
+                    val currentIndex = sampleStations.indexOfFirst { it.id == selectedStationId }.coerceAtLeast(0)
+                    MainAudioPlayer(
+                        station=currentStation,//seleccionar emisora
+                        //funciones para cambiar de emisora
+                        onNextStation = {
+                            val nextIndex = (currentIndex + 1) % sampleStations.size
+                            selectedStationId = sampleStations[nextIndex].id
+                        },
+                        onPreviousStation = {
+                            // Retrocede al índice anterior de forma circular
+                            val previousIndex = if (currentIndex - 1 < 0) sampleStations.size - 1 else currentIndex - 1
+                            selectedStationId = sampleStations[previousIndex].id
+                        }
+
+                    )
 
                     Spacer(modifier = Modifier.height(16.dp))
                     // Emisoras
                     StationCatalog(
+                        stations = sampleStations,//Integrar seleccion de emisora
                         activeStationId = selectedStationId,
                         onStationSelect = { station ->
                             selectedStationId = station.id
